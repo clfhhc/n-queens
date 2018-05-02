@@ -62,7 +62,7 @@
     },
 
 
-/*
+    /*
          _             _     _
      ___| |_ __ _ _ __| |_  | |__   ___ _ __ ___ _
     / __| __/ _` | '__| __| | '_ \ / _ \ '__/ _ (_)
@@ -79,12 +79,25 @@
     //
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
-      return false; // fixme
+      //input: integer as row index
+      //output: boolean, if there's a conflict, return true
+      
+      //store on a new variable the board index in a row array
+      //iterate over the row array and sum up the numbers
+      //check if the sum is greater than 1
+      //if true: return true
+      //if false: return false
+      
+      var row = this.get(rowIndex);
+      return row.reduce((sum, item) => sum += item, 0) > 1;
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
-      return false; // fixme
+      //input: none;
+      //output: boolean, if there's at least one conflict, return true
+      
+      return !this.rows().every((item, index)=>(!this.hasRowConflictAt(index)));
     },
 
 
