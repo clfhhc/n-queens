@@ -97,7 +97,16 @@
       //input: none;
       //output: boolean, if there's at least one conflict, return true
       
-      return !this.rows().every((item, index)=>(!this.hasRowConflictAt(index)));
+      let conflict = false;
+      let i = 0;
+      while (!conflict && i < this.get('n')) {
+        conflict = this.hasRowConflictAt(i);
+        i++;
+      }
+      
+      return conflict;
+      
+      //return !this.rows().every((item, index)=>(!this.hasRowConflictAt(index)));
     },
 
 
@@ -121,7 +130,17 @@
     hasAnyColConflicts: function() {
       // input : none
       // output : boolean; if there's at least one conflict return true.
-      return !this.rows().every((item, index)=>(!this.hasColConflictAt(index)));
+      
+      let conflict = false;
+      let i = 0;
+      while (!conflict && i < this.get('n')) {
+        conflict = this.hasColConflictAt(i);
+        i++;
+      }
+      
+      return conflict;
+      
+      //return !this.rows().every((item, index)=>(!this.hasColConflictAt(index)));
       
     },
 
@@ -157,6 +176,9 @@
       var noConflict = true;
       for (var i = -this.get('n') + 1; i < this.get('n'); i++ ) {
         noConflict = noConflict && !(this.hasMajorDiagonalConflictAt(i));
+        if (!noConflict) {
+          break;
+        }
       }
       return !noConflict;
     },
@@ -186,6 +208,9 @@
       var noConflict = true;
       for (var i = 1; i < 2 * (this.get('n') - 1); i++) {
         noConflict = noConflict && !(this.hasMinorDiagonalConflictAt(i));
+        if (!noConflict) {
+          break;
+        }
       }
       return !noConflict;
     }
@@ -196,11 +221,12 @@
   });
 
   var makeEmptyMatrix = function(n) {
-    return _(_.range(n)).map(function() {
-      return _(_.range(n)).map(function() {
-        return 0;
-      });
-    });
+    // return _(_.range(n)).map(function() {
+    //   return _(_.range(n)).map(function() {
+    //     return 0;
+    //   });
+    // });
+    return new Array(n).fill().map(()=>new Array(n).fill(0));
   };
 
 }());
