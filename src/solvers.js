@@ -20,10 +20,10 @@ window.findNRooksSolution = function(n) {
   //output: array of arrays (with one solution)
   
   
-  var solution = new Board({'n':n});
+  var solution = new Board({'n': n});
   
   for (var i = 0; i < n; i++) {
-    solution.togglePiece(i,i);
+    solution.togglePiece(i, i);
   }
 
   console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
@@ -39,6 +39,30 @@ window.countNRooksSolutions = function(n) {
 
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
+};
+
+window.findNRooksSolutionSet = function(n) {
+  // input = integer (size of board);
+  // output = array of solution Boards for N-Rooks.
+  var output = [];
+  if (n === 1) {
+    output.push(new Board([[1]]));
+  } else {
+    var subSolutionSet = findNRooksSolutionSet(n - 1);
+    for (var firstRowIndex = 0; firstRowIndex < n; firstRowIndex++) {
+      for (var subSolutionIndex = 0; subSolutionIndex < subSolutionSet.length; subSolutionIndex++) {
+        var tempArr = [new Array(n).fill(0)];
+        tempArr[0][firstRowIndex] = 1;
+        for (var row = 0; row < n - 1; row++) {
+          var copyArr = Array.from(subSolutionSet[subSolutionIndex].get(row));
+          copyArr.splice(firstRowIndex, 0, 0);
+          tempArr.push(copyArr);
+        }
+        output.push(new Board(tempArr));
+      }
+    }
+  }
+  return output;
 };
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other

@@ -111,7 +111,7 @@
       // output = boolean (true if conflict, false otherwise);
       
       // iterate over each row array
-        // Sum all numbers at each index of the arrays
+      // Sum all numbers at each index of the arrays
       return (this.rows().reduce(function(sum, rowArr) {
         return sum + rowArr[colIndex];
       }, 0) > 1);
@@ -137,7 +137,7 @@
       
       //creating a variable to keep track of steps
       //iterate over each item on the major diagonals
-        //sum them up and check if it is greater than 1
+      //sum them up and check if it is greater than 1
       let n = this.get('n');
       let sum = 0;
       let startRowIndex = majorDiagonalIndex > 0 ? 0 : -majorDiagonalIndex;
@@ -155,7 +155,7 @@
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
       var noConflict = true;
-      for (var i = -this.get('n') +1 ; i < this.get('n'); i++ ) {
+      for (var i = -this.get('n') + 1; i < this.get('n'); i++ ) {
         noConflict = noConflict && !(this.hasMajorDiagonalConflictAt(i));
       }
       return !noConflict;
