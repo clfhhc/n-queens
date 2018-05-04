@@ -99,17 +99,14 @@ window.findNPieceSolutionsSet = function(n, type = 'rook') {
     }
     var output = [];
     if (n === 1) {
-      output.push([[1]]);
+      output.push([0]);
     } else {
       var subSolutionSet = findNRooksSolutionSet(n - 1);
       for (var firstRowColIndex = 0; firstRowColIndex < n; firstRowColIndex++) {
         for (var subSolutionIndex = 0; subSolutionIndex < subSolutionSet.length; subSolutionIndex++) {
-          var tempArr = [new Array(n).fill(0)];
-          tempArr[0][firstRowColIndex] = 1;
+          var tempArr = [firstRowColIndex];
           for (var row = 0; row < n - 1; row++) {
-            var copyArr = Array.from(subSolutionSet[subSolutionIndex][row]);
-            copyArr.splice(firstRowColIndex, 0, 0);
-            tempArr.push(copyArr);
+            tempArr.push((subSolutionSet[subSolutionIndex][row] >= firstRowColIndex) ? subSolutionSet[subSolutionIndex][row] + 1 : subSolutionSet[subSolutionIndex][row]);
           }
           output.push(tempArr);
         }
@@ -125,9 +122,23 @@ window.findNPieceSolutionsSet = function(n, type = 'rook') {
     }
    
     return nRookSolutionSet.filter(function(solution) {
-      solution = new Board(solution);
-      return !solution.hasAnyMajorDiagonalConflicts() && !solution.hasAnyMinorDiagonalConflicts();
+      return !hasAnyDiagonalConflicts(solution);
     });
+  };
+  
+  let hasAnyDiagonalConflicts = function(array) {
+    let noConflict = true;
+    let i = 0;
+    while (i < array.length - 1 && noConflict) {
+      let j = i + 1;
+      while (j < array.length && noConflict) {
+        noConflict = noConflict && (Math.abs(array[i] - array[j]) !== Math.abs(i - j));
+        j++;
+      }
+      i++;
+    }
+    return !noConflict;
+    
   };
   
   //Code Start:
@@ -146,7 +157,10 @@ window.findNQueensSolution = function(n) {
   if (solutionSet.length === 0) {
     return new Array(n).fill(Array(n).fill(0));
   }
-  var solution = solutionSet[0];
+  var solution = new Array(n).fill().map(()=> Array(n).fill(0));
+  solutionSet[0].forEach((item, index) => {
+    solution[index][item] = 1;
+  });
 
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
   return solution;

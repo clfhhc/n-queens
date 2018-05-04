@@ -3,7 +3,7 @@ describe('solvers', function() {
 
   describe('findNRooksSolution()', function() {
 
-    it('finds a valid solution for n of 1-8', function() {
+    xit('finds a valid solution for n of 1-8', function() {
       _.range(1, 9).map(function(n) {
         var solutionBoard = new Board(findNPieceSolutionsSet(n, 'rook')[0]);
         var numPieces = _.reduce(solutionBoard.rows(), function(memo, row) {
@@ -44,7 +44,8 @@ describe('solvers', function() {
             return memo + col;
           }, 0);
         }, 0);
-
+        
+        console.log('this is ' + n);
         expect(solutionBoard.get('n')).to.equal(n);
         expect(numPieces).to.equal(n);
         expect(solutionBoard.hasAnyQueensConflicts()).to.be.equal(false);
