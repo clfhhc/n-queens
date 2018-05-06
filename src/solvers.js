@@ -175,3 +175,103 @@ window.countNQueensSolutions = function(n) {
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 };
+
+//1997 Paper solution
+window.N = function (Q, u, ee, n, s, H, R) {
+  s = 0;
+  Q = u ? Q : (1 << Q) - 1;
+  H = ~(u | ee | n ) & Q;
+  while (H) { H ^= R = -H & H, s += N (Q, (u | R) << 1, ee | R, (n | R) >> 1); }
+  return s += ee === Q;
+};
+
+
+//new bitwise Solution based on 1997 paper and solutions
+window.togglePiece = function (bitRow, colIndex) {
+  bitRow ^= (1 << colIndex);
+  return bitRow;
+};
+
+window.movePiecesLeft = function (bitRow, numCol) {
+  bitRow >>= numCol;
+  return bitRow;
+};
+
+window.movePiecesRight = function (bitRow, numCol) {
+  bitRow <<= numCol;
+  return bitRow;
+};
+
+window.createFullRow = function (rowSize) {
+  return ((1 << rowSize) - 1);
+};
+
+window.convertToBitwiseBoard = function (boardArray) {
+  let fullRow = createFullRow(boardArray[0].length);
+  let bitArray = boardArray.map((arr)=>{
+    return arr.reduce((accu, item, colIndex) => {
+      (item) && (accu += 1 << colIndex );
+      return accu;
+    }, 0);
+  });
+  return [bitArray, fullRow];
+};
+
+window.convertToNormalBoard = function (bitArray, fullRow) {
+  let boardArray = [];
+  boardArray.length = bitArray.length;
+  bitArray.forEach((row, i) => {
+    let rowArray = [];
+    let rowIndex = fullRow;
+    while (rowIndex) {
+      rowArray.push(row & 1);
+      row >>= 1;
+      rowIndex >>= 1;
+    }
+    boardArray[i] = rowArray;
+  });
+  return boardArray;
+};
+
+window.findNPiecesSolutions = function (n, type, cbComplete) {
+  let criteria;
+  if (type === 'queen') {
+    criteria = [function([leftDiagonal, column, rightDiagonal], currentRow) {
+      // console.log([((leftDiagonal | currentRow) >> 1), (column | currentRow), ((rightDiagonal | currentRow) << 1)])
+      return [((leftDiagonal | currentRow) >> 1), (column | currentRow), ((rightDiagonal | currentRow) << 1)];
+    }, 0, 0, 0];
+  } else if (type === 'rook') {
+    criteria = [function([column], currentRow) {
+      return [column | currentRow];
+    }, 0]; 
+  }
+
+  let findSolution = function (n, bitArray, fullRow, criteria, cbComplete, possibleRow, currentRow, criteriaIndex, forbidden, result) {
+    if (n === 0) {
+      return cbComplete(bitArray, fullRow);
+    }
+    criteriaIndex = 1;
+    forbidden = criteria[criteriaIndex];
+    while (criteriaIndex < criteria.length) {
+      forbidden = forbidden | criteria[criteriaIndex];
+      criteriaIndex++;
+    }
+
+    possibleRow = ~forbidden & fullRow;
+        
+    while (possibleRow) {
+      bitArray[bitArray.length - n] = currentRow = -possibleRow & possibleRow;
+      result = findSolution(n - 1, bitArray, fullRow, [criteria[0]].concat(criteria[0](criteria.slice(1), currentRow, n)), cbComplete);
+      if (result) {
+        return result;
+      }
+      possibleRow ^= currentRow;
+    }
+  };
+
+  let fullRow = (1 << n) - 1;
+  let bitArray = [];
+  bitArray.length = n;
+
+  return findSolution(n, bitArray, fullRow, criteria, cbComplete);
+};
